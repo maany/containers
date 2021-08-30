@@ -26,7 +26,6 @@ jobs:
         id: docker_build
         uses: docker/build-push-action@v2
         with:
-          context: clients
-          file: ./Dockerfile
+          context: ./clients
           push: true
           tags: maany/gh_action_test_rucio_client:latest
