@@ -22,6 +22,7 @@ jobs:
         shell: bash
         run: |
           pwd
+          ls -la ../
           ls -la
       - name: Build and push
         id: docker_build
