@@ -1,10 +1,10 @@
 name: docker-auto-build
 
 on:
-  - push:
-      branches:
-        - 'master'
-  - pull-request:
+  push:
+    branches:
+      - 'master'
+  pull-request:
 
 jobs:
   build-and-push:
