@@ -18,6 +18,10 @@ jobs:
         with:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+
+      - name: Checkout
+        uses: actions/checkout@v2
+        
       - name: Test Path
         shell: bash
         run: |
