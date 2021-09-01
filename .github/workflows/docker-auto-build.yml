@@ -33,7 +33,9 @@ jobs:
         id: tag
         shell: bash
         run: | 
-          echo ::set-output name=tag::${GITHUB_REF#refs/*/} 
+          GIT_TAG=`echo $(git describe --tags --abbrev=0)`
+          echo ::set-output name=tag::${GIT_TAG} 
+          # echo ::set-output name=tag::${GITHUB_REF#refs/*/} 
       - name: Test Path
         shell: bash
         run: |
