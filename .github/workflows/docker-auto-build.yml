@@ -6,6 +6,8 @@ on:
       - '!*'
     tags:
       - '*'
+    release:
+      types: [created, edited, released, published]
 
 jobs:
   build-and-push:
