@@ -36,10 +36,10 @@ jobs:
         shell: bash
         run: | 
           GIT_TAG=$(echo $(git describe --tags --abbrev=0))
-          IMAGE_NAME=$(echo '${{ github.repository_owner }}/rucio-${{ matrix.context_dir }}:release-${{ steps.tag.outputs.tag }}')
+          IMAGE_NAME=$(echo '${{ github.repository_owner }}/rucio-${{ matrix.context_dir }}:release-$GIT_TAG')
           echo ::set-output name=tag::$GIT_TAG
           echo ::set-output name=image::$IMAGE_NAME
-      
+          echo $IMAGE_NAME
       - name: Prepare Docker Image name
         shell: bash
         run: |
