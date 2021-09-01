@@ -3,19 +3,17 @@ name: docker-auto-build
 on:
   push:
     branches:
-      - 'master'
+      - '!*'
+    tags:
+      - '*'
   pull_request:
-
-# on:
-#   push:
-#     branches:
-#       - "!*"
-#     tags:
-#       - "v*"
 
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        context_dir: ['clients', 'server', 'daemons']
     steps:      
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
@@ -26,31 +24,30 @@ jobs:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
 
-      - name: Checkout
+      - name: Checkout the containers repository
         uses: actions/checkout@v2
         
-      - name: Get Release Tag
+      - name: Get the new Release Tag
         id: tag
         shell: bash
         run: | 
           GIT_TAG=$(echo $(git describe --tags --abbrev=0))
-          echo ::set-output name=tag::$GIT_TAG 
+          echo ::set-output name=tag::1.26.1 
           # echo ::set-output name=tag::${GITHUB_REF#refs/*/} 
-      - name: Test Path
+      
+      - name: Debug
         shell: bash
         run: |
           pwd
           ls -la ../
           ls -la
           echo '${{ steps.tag.outputs.tag }}'
+      
       - name: Build and push
         id: docker_build
-        env:
-          TAG: '1.26.3'
-          TAG2: ${{ steps.tag.outputs.tag }}
         uses: docker/build-push-action@v2
         with:
-          context: ./clients
+          context: ./${{ matrix.context_dir }}
           push: true
-          tags: maany/gh_action_test_rucio_client:latest
-          build-args: TAG=1.26.3
+          tags: rucio/rucio-{{ steps.tag.outputs.tag }}:release-{{ steps.tag.outputs.tag }}
+          build-args: TAG={{ steps.tag.outputs.tag }}
