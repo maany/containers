@@ -6,7 +6,8 @@ on:
       - '!*'
     tags:
       - '*'
-  release:
+  release: 
+    types: [created, edited]
 
 jobs:
   build-and-push:
@@ -35,12 +36,14 @@ jobs:
         shell: bash
         run: | 
           GIT_TAG=$(echo $(git describe --tags --abbrev=0))
+          IMAGE_NAME=$(echo '${{ github.repository_owner }}/rucio-${{ matrix.context_dir }}:release-${{ steps.tag.outputs.tag }}')
           echo ::set-output name=tag::$GIT_TAG
+          echo ::set-output name=tag::$IMAGE_NAME
       
-      - name: Debug
+      - name: Prepare Docker Image name
         shell: bash
         run: |
-          echo '${{ steps.tag.outputs.tag }}'
+          echo '${{ github.repository_owner }}/rucio-${{ matrix.context_dir }}:release-${{ steps.tag.outputs.tag }}'
       
       - name: Build and push
         id: docker_build
