@@ -11,10 +11,12 @@ on:
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
+    
     strategy:
       matrix:
         context_dir: ['clients', 'server', 'daemons']
       fail-fast: false
+    
     steps:      
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
@@ -33,15 +35,11 @@ jobs:
         shell: bash
         run: | 
           GIT_TAG=$(echo $(git describe --tags --abbrev=0))
-          echo ::set-output name=tag::1.26.1 
-          # echo ::set-output name=tag::${GITHUB_REF#refs/*/} 
+          echo ::set-output name=tag::$GIT_TAG
       
       - name: Debug
         shell: bash
         run: |
-          pwd
-          ls -la ../
-          ls -la
           echo '${{ steps.tag.outputs.tag }}'
       
       - name: Build and push
@@ -50,5 +48,5 @@ jobs:
         with:
           context: ./${{ matrix.context_dir }}
           push: true
-          tags: 'maany/rucio-${{ matrix.context_dir }}:release-${{ steps.tag.outputs.tag }}'
+          tags: '${{ github.repository_owner }}/rucio-${{ matrix.context_dir }}:release-${{ steps.tag.outputs.tag }}'
           build-args: TAG=${{ steps.tag.outputs.tag }}
