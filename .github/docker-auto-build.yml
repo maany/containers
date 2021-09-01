@@ -6,7 +6,7 @@ on:
       - '!*'
     tags:
       - '*'
-    release:
+  release:
       types: [created, edited, released, published]
 
 jobs:
