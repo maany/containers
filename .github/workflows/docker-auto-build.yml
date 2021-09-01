@@ -40,7 +40,7 @@ jobs:
           pwd
           ls -la ../
           ls -la
-          echo '${{ steps.tag.outputs.tag }}''
+          echo '${{ steps.tag.outputs.tag }}'
       - name: Build and push
         id: docker_build
         env:
