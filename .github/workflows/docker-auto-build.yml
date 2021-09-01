@@ -33,7 +33,7 @@ jobs:
         id: tag
         shell: bash
         run: | 
-          echo ::set-output name=tag::${GITHUB_REF#refs/*/}
+          echo ::set-output name=tag::${GITHUB_REF#refs/*/} 
       - name: Test Path
         shell: bash
         run: |
@@ -44,7 +44,8 @@ jobs:
       - name: Build and push
         id: docker_build
         env:
-          TAG: ${{ steps.tag.outputs.tag }}
+          TAG: '1.26.3'
+          TAG2: ${{ steps.tag.outputs.tag }}
         uses: docker/build-push-action@v2
         with:
           context: ./clients
