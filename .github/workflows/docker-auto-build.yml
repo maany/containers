@@ -40,6 +40,7 @@ jobs:
           echo ::set-output name=tag::$GIT_TAG
           echo ::set-output name=image::$IMAGE_NAME
           echo $IMAGE_NAME
+      
       - name: Prepare Docker Image name
         shell: bash
         run: |
