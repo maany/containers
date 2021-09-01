@@ -50,5 +50,5 @@ jobs:
         with:
           context: ./${{ matrix.context_dir }}
           push: true
-          tags: 'rucio/rucio-${{ steps.tag.outputs.tag }}:release-${{ steps.tag.outputs.tag }}'
+          tags: 'maany/rucio-${{ steps.tag.outputs.tag }}:release-${{ steps.tag.outputs.tag }}'
           build-args: TAG=${{ steps.tag.outputs.tag }}
