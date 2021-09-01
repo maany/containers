@@ -54,4 +54,4 @@ jobs:
           push: true
           tags: maany/gh_action_test_rucio_client:latest
           build-args:
-            TAG: '1.26.3'
+            - TAG=1.26.3
