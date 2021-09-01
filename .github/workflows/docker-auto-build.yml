@@ -32,11 +32,11 @@ jobs:
         uses: actions/checkout@v2
         
       - name: Get the new Release Tag
-        id: tag
+        id: release
         shell: bash
         run: | 
           GIT_TAG=$(echo $(git describe --tags --abbrev=0))
-          IMAGE_NAME=$(echo '${{ github.repository_owner }}/rucio-${{ matrix.context_dir }}:release-$GIT_TAG')
+          IMAGE_NAME=$(echo '${{ github.repository_owner }}/rucio-${{ matrix.context_dir }}:release'-$GIT_TAG)
           echo ::set-output name=tag::$GIT_TAG
           echo ::set-output name=image::$IMAGE_NAME
           echo $IMAGE_NAME
@@ -44,7 +44,7 @@ jobs:
       - name: Prepare Docker Image name
         shell: bash
         run: |
-          echo '${{ github.repository_owner }}/rucio-${{ matrix.context_dir }}:release-${{ steps.tag.outputs.tag }}'
+          echo '${{ steps.release.outputs.image }}'
       
       - name: Build and push
         id: docker_build
@@ -52,5 +52,5 @@ jobs:
         with:
           context: ./${{ matrix.context_dir }}
           push: true
-          tags: '${{ steps.tag.outputs.image }}'
-          build-args: TAG=${{ steps.tag.outputs.tag }}
+          tags: '${{ steps.release.outputs.image }}'
+          build-args: TAG=${{ steps.release.outputs.tag }}
