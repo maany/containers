@@ -38,7 +38,7 @@ jobs:
           GIT_TAG=$(echo $(git describe --tags --abbrev=0))
           IMAGE_NAME=$(echo '${{ github.repository_owner }}/rucio-${{ matrix.context_dir }}:release-${{ steps.tag.outputs.tag }}')
           echo ::set-output name=tag::$GIT_TAG
-          echo ::set-output name=tag::$IMAGE_NAME
+          echo ::set-output name=image::$IMAGE_NAME
       
       - name: Prepare Docker Image name
         shell: bash
@@ -51,5 +51,5 @@ jobs:
         with:
           context: ./${{ matrix.context_dir }}
           push: true
-          tags: '${{ github.repository_owner }}/rucio-${{ matrix.context_dir }}:release-${{ steps.tag.outputs.tag }}'
+          tags: '${{ steps.tag.outputs.image }}'
           build-args: TAG=${{ steps.tag.outputs.tag }}
