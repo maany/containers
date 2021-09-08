@@ -39,6 +39,7 @@ jobs:
           echo $REPO_URL
           BRANCHES=$(git ls-remote --heads $REPO_URL | awk -F '\t' '{print $2}' | awk -F '/' '{print $3}')
           echo $BRANCHES
+          git fetch $REPO_URL $BRANCHES
           # GIT_TAG=$(echo $(git describe --tags --abbrev=0))
           # TAG_SOURCE_BRANCH=$(echo $(git branch --contains tags/$GIT_TAG))
           # IMAGE_TAG=$(echo '${{ github.repository_owner }}/rucio-${{ matrix.context_dir }}:release'-$GIT_TAG)
