@@ -37,7 +37,7 @@ jobs:
           # git fetch --prune --unshallow --tags
           REPO_URL=$(echo 'git://github.com/${{ github.repository_owner }}/containers.git') 
           echo $REPO_URL
-          BRANCHES=$(git ls-remote --heads $REPO_URL | awk -F '\t' '{print $2}' | awk -F '/' '{print $3})
+          BRANCHES=$(git ls-remote --heads $REPO_URL | awk -F '\t' '{print $2}' | awk -F '/' '{print $3}')
           echoo $BRANCHES
           # GIT_TAG=$(echo $(git describe --tags --abbrev=0))
           # TAG_SOURCE_BRANCH=$(echo $(git branch --contains tags/$GIT_TAG))
