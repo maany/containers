@@ -28,6 +28,7 @@ jobs:
         uses: actions/checkout@v2
         with:
           ref: '1.26.2'
+          fetch-depth: 0
         # TODO remove
       - name: Get the new Release Tag
         id: release
