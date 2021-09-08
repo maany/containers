@@ -42,7 +42,11 @@ jobs:
           DOCKER_HUB_TAGS=$DOCKER_HUB_TAGS,$LATEST_TAG
           echo ::set-output name=tag::$GIT_TAG
           echo ::set-output name=tags::$DOCKER_HUB_TAGS
-      
+          # TODO remove
+          echo "*****"
+          echo $TAG_SOURCE_BRANCH
+          echo $GIT_TAG
+          echo "*****"
       # - name: Prepare Docker Image name
       #   shell: bash
       #   run: |
