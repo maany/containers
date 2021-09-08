@@ -27,12 +27,13 @@ jobs:
       - name: Checkout the containers repository
         uses: actions/checkout@v2
         with:
-          ref: '1.23.16'
+          ref: '1.26.1'
         # TODO remove
       - name: Get the new Release Tag
         id: release
         shell: bash
-        run: | 
+        run: |
+          git fetch --prune --unshallow --tags 
           GIT_TAG=$(echo $(git describe --tags --abbrev=0))
           TAG_SOURCE_BRANCH=$(echo $(git branch --contains tags/$GIT_TAG))
           IMAGE_TAG=$(echo '${{ github.repository_owner }}/rucio-${{ matrix.context_dir }}:release'-$GIT_TAG)
