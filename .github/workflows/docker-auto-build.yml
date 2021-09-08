@@ -55,6 +55,8 @@ jobs:
           else
             echo "Not there"
           fi
+          git branch -v
+          
           echo "*****"
       # - name: Prepare Docker Image name
       #   shell: bash
