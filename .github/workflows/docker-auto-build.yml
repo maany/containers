@@ -36,33 +36,34 @@ jobs:
         run: |
           # git fetch --prune --unshallow --tags
           REPO_URL=$(echo 'git://github.com/${{ github.repository_owner }}/containers.git') 
-          BRANCHES=$(git ls-remote --heads $REPO_URL | awk -F '\t' '{print $2}' | awk -F '/' '{print $3})
-          GIT_TAG=$(echo $(git describe --tags --abbrev=0))
-          TAG_SOURCE_BRANCH=$(echo $(git branch --contains tags/$GIT_TAG))
-          IMAGE_TAG=$(echo '${{ github.repository_owner }}/rucio-${{ matrix.context_dir }}:release'-$GIT_TAG)
-          DOCKER_HUB_TAGS=$IMAGE_TAG
-
-          LATEST_TAG=$(echo '${{ github.repository_owner }}/rucio-${{ matrix.context_dir }}:latest')
-          DOCKER_HUB_TAGS=$DOCKER_HUB_TAGS,$LATEST_TAG
-          echo ::set-output name=tag::$GIT_TAG
-          echo ::set-output name=tags::$DOCKER_HUB_TAGS
-          # TODO remove
-          echo "*****"
-          echo $TAG_SOURCE_BRANCH
-          echo $GIT_TAG
-
-          echo $TAG_SOURCE_BRANCH
-          if [[ "$TAG_SOURCE_BRANCH" == *"$master"* ]]; then
-            echo "It's there."
-          else
-            echo "Not there"
-          fi
           echo $REPO_URL
-          echo $BRANCHES
-          git remote -v
+          # BRANCHES=$(git ls-remote --heads $REPO_URL | awk -F '\t' '{print $2}' | awk -F '/' '{print $3})
+          # GIT_TAG=$(echo $(git describe --tags --abbrev=0))
+          # TAG_SOURCE_BRANCH=$(echo $(git branch --contains tags/$GIT_TAG))
+          # IMAGE_TAG=$(echo '${{ github.repository_owner }}/rucio-${{ matrix.context_dir }}:release'-$GIT_TAG)
+          # DOCKER_HUB_TAGS=$IMAGE_TAG
 
-          echo "*****"
-          git fetch $REPO_URL $BRANCHES
+          # LATEST_TAG=$(echo '${{ github.repository_owner }}/rucio-${{ matrix.context_dir }}:latest')
+          # DOCKER_HUB_TAGS=$DOCKER_HUB_TAGS,$LATEST_TAG
+          # echo ::set-output name=tag::$GIT_TAG
+          # echo ::set-output name=tags::$DOCKER_HUB_TAGS
+          # # TODO remove
+          # echo "*****"
+          # echo $TAG_SOURCE_BRANCH
+          # echo $GIT_TAG
+
+          # echo $TAG_SOURCE_BRANCH
+          # if [[ "$TAG_SOURCE_BRANCH" == *"$master"* ]]; then
+          #   echo "It's there."
+          # else
+          #   echo "Not there"
+          # fi
+          # echo $REPO_URL
+          # echo $BRANCHES
+          # git remote -v
+
+          # echo "*****"
+          # git fetch $REPO_URL $BRANCHES
       # - name: Prepare Docker Image name
       #   shell: bash
       #   run: |
