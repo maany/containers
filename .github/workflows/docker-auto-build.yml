@@ -27,7 +27,7 @@ jobs:
       - name: Checkout the containers repository
         uses: actions/checkout@v2
         with:
-          ref: '1.26.1'
+          ref: '1.23.16'
           fetch-depth: 0
         # TODO remove
       - name: Get the new Release Tag
