@@ -48,6 +48,13 @@ jobs:
           echo "*****"
           echo $TAG_SOURCE_BRANCH
           echo $GIT_TAG
+
+          echo $TAG_SOURCE_BRANCH
+          if [[ "$TAG_SOURCE_BRANCH" == *"$master"* ]]; then
+            echo "It's there."
+          else
+            echo "Not there"
+          fi
           echo "*****"
       # - name: Prepare Docker Image name
       #   shell: bash
