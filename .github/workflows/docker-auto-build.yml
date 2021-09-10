@@ -47,6 +47,10 @@ jobs:
         shell: bash
         run: |  
           GIT_TAG=${{ steps.release_tag.outputs.version }}
+          if [[ "prepend-rucio" == *"${{ matrix.context }}"* ]]; then
+            echo "RUCIO- WILL BE PRESENT"
+          fi
+          
           IMAGE_TAG=$(echo '${{ github.repository_owner }}/rucio-${{ matrix.context }}:release'-$GIT_TAG)
           DOCKER_HUB_TAGS=$IMAGE_TAG
 
