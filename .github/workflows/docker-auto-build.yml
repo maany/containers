@@ -60,7 +60,7 @@ jobs:
           echo ::set-output name=tags::$DOCKER_HUB_TAGS
           
           echo $GIT_TAG
-      
+          echo $DOCKER_HUB_TAGS
 
       # - name: Build and push
       #   id: docker_build
