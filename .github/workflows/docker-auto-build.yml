@@ -47,7 +47,7 @@ jobs:
         shell: bash
         run: |  
           GIT_TAG=${{ steps.release_tag.outputs.version }}
-          if [[ "prepend-rucio" == *"${{ matrix.context }}"* ]]; then
+          if [[ "${{ matrix.context }}" =~ .*"prepend-rucio".* ]]; then
             echo "RUCIO- WILL BE PRESENT"
           else
             echo "RUCIO- NOT PRESENT"
@@ -68,7 +68,7 @@ jobs:
           echo ::set-output name=tag::$GIT_TAG
           echo ::set-output name=tags::$DOCKER_HUB_TAGS
           
-          echo "For tag: $GIT_TAG, the following images will be deployed: $DOCKER_HUB_TAGS"
+          echo "For tag: $GIT_TAG, the following images will be pushed: $DOCKER_HUB_TAGS"
           
       # - name: Set up Docker Buildx
       #   uses: docker/setup-buildx-action@v1
