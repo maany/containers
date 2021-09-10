@@ -59,7 +59,7 @@ jobs:
           echo ::set-output name=tag::$GIT_TAG
           echo ::set-output name=tags::$DOCKER_HUB_TAGS
           
-          echo $DOCKER_HUB_TAGS
+          echo $GIT_TAG
       
 
       # - name: Build and push
