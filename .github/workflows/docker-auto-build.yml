@@ -11,19 +11,21 @@ jobs:
     
     strategy:
       matrix:
-        context_dir: ['clients', 'server', 'daemons']
+        context: [
+          'clients, prepend-rucio, prepend-release, push-tagged, push-latest', 
+          'server, prepend-rucio, prepend-release, push-tagged, push-latest',
+          'daemons, prepend-rucio, prepend-release, push-tagged, push-latest',
+          'ui, prepend-rucio, prepend-release, push-tagged, push-latest',
+          'init, prepend-rucio, prepend-release, push-tagged, push-latest',
+          'fts, push-latest',
+          'fts-cron, push-latest',
+          'ssh, push-latest',
+          'xrootd, push-latest',
+          'xrootd-noauth, push-latest'
+          ]
       fail-fast: false
     
     steps:      
-      # - name: Set up Docker Buildx
-      #   uses: docker/setup-buildx-action@v1
-
-      # - name: Login to DockerHub
-      #   uses: docker/login-action@v1 
-      #   with:
-      #     username: ${{ secrets.DOCKER_HUB_USERNAME }}
-      #     password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
-
       - name: Checkout the containers repository
         uses: actions/checkout@v2
         with:
@@ -38,21 +40,21 @@ jobs:
       
       - name: Get the release tag from GitHub
         id: release_tag
-        run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
+        run: echo ::set-output name=version::${GITHUB_REF/refs\/tags\//}
       
-      - name: Generate Release Tags
+      - name: Generate Docker Image Names
         id: release
         shell: bash
         run: |  
           GIT_TAG=${{ steps.release_tag.outputs.version }}
-          IMAGE_TAG=$(echo '${{ github.repository_owner }}/rucio-${{ matrix.context_dir }}:release'-$GIT_TAG)
+          IMAGE_TAG=$(echo '${{ github.repository_owner }}/rucio-${{ matrix.context }}:release'-$GIT_TAG)
           DOCKER_HUB_TAGS=$IMAGE_TAG
 
           GIT_TAG_COMMIT_SHA=$(echo $(git rev-list -n 1 $GIT_TAG))
           GIT_MASTER_LATEST_COMMIT_SHA=$(echo $(git ls-remote --heads origin | grep master  |  awk -F '\t' '{print $1}'))
           
           if [ $GIT_MASTER_LATEST_COMMIT_SHA = $GIT_TAG_COMMIT_SHA ]; then
-            LATEST_TAG=$(echo '${{ github.repository_owner }}/rucio-${{ matrix.context_dir }}:latest')
+            LATEST_TAG=$(echo '${{ github.repository_owner }}/rucio-${{ matrix.context }}:latest')
             DOCKER_HUB_TAGS=$DOCKER_HUB_TAGS,$LATEST_TAG
           fi
 
@@ -61,12 +63,20 @@ jobs:
           
           echo "For tag: $GIT_TAG, the following images will be deployed: $DOCKER_HUB_TAGS"
           
+      # - name: Set up Docker Buildx
+      #   uses: docker/setup-buildx-action@v1
+
+      # - name: Login to DockerHub
+      #   uses: docker/login-action@v1 
+      #   with:
+      #     username: ${{ secrets.DOCKER_HUB_USERNAME }}
+      #     password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
 
       # - name: Build and push
       #   id: docker_build
       #   uses: docker/build-push-action@v2
       #   with:
-      #     context: ./${{ matrix.context_dir }}
+      #     context: ./${{ matrix.context }}
       #     push: true
       #     tags: '${{ steps.release.outputs.tags }}'
       #     build-args: TAG=${{ steps.release.outputs.tag }}
