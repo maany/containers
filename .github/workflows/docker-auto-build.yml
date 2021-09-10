@@ -42,6 +42,9 @@ jobs:
         shell: bash
         run: |
           
+          IMAGE_TAG=$(echo '${{ github.repository_owner }}/rucio-${{ matrix.context_dir }}:release'-$GIT_TAG)
+          DOCKER_HUB_TAGS=$IMAGE_TAG
+
           GIT_TAG=$(echo $(git describe --tags --abbrev=0))
           GIT_TAG_COMMIT_SHA=$(echo $(git rev-list -n 1 $GIT_TAG))
           GIT_MASTER_LATEST_COMMIT_SHA=$(echo $(git ls-remote --heads origin | grep master  |  awk -F '\t' '{print $1}'))
@@ -52,14 +55,10 @@ jobs:
             DOCKER_HUB_TAGS=$DOCKER_HUB_TAGS,$LATEST_TAG
           fi
 
-          
-          IMAGE_TAG=$(echo '${{ github.repository_owner }}/rucio-${{ matrix.context_dir }}:release'-$GIT_TAG)
-          DOCKER_HUB_TAGS=$IMAGE_TAG
-
           echo ::set-output name=tag::$GIT_TAG
           echo ::set-output name=tags::$DOCKER_HUB_TAGS
           
-          echo $DOCKER_DOCKER_HUB_TAGS
+          echo $DOCKER_HUB_TAGS
       
 
       # - name: Build and push
