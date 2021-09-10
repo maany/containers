@@ -46,8 +46,6 @@ jobs:
 
           GIT_TAG_COMMIT_SHA=$(echo $(git rev-list -n 1 $GIT_TAG))
           GIT_MASTER_LATEST_COMMIT_SHA=$(echo $(git ls-remote --heads origin | grep master  |  awk -F '\t' '{print $1}'))
-          echo $GIT_MASTER_LATEST_COMMIT_SHA
-          echo $GIT_TAG_COMMIT_SHA
           
           if [ $GIT_MASTER_LATEST_COMMIT_SHA = $GIT_TAG_COMMIT_SHA ]; then
             LATEST_TAG=$(echo '${{ github.repository_owner }}/rucio-${{ matrix.context_dir }}:latest')
