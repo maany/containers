@@ -47,13 +47,18 @@ jobs:
         shell: bash
         run: |  
           GIT_TAG=${{ steps.release_tag.outputs.version }}
+          CONTEXT_DIR=$(echo "${{ matrix.context }}" | cut -d, -f1 )
+          IMAGE_TAG="${{ github.repository_owner/}}"
           if [[ "${{ matrix.context }}" =~ .*"prepend-rucio".* ]]; then
-            echo "RUCIO- WILL BE PRESENT"
+            IMAGE_TAG+="rucio-$CONTEXT_DIR"
           else
-            echo "RUCIO- NOT PRESENT"
+            IMAGE_TAG+=$CONTEXT_DIR
           fi
+
           echo "${{ matrix.context }}"
           echo "CoNtEXT above"
+          echo "$IMAGE_TAG"
+          echo "Immmage Tagg"
           IMAGE_TAG=$(echo '${{ github.repository_owner }}/rucio-${{ matrix.context }}:release'-$GIT_TAG)
           DOCKER_HUB_TAGS=$IMAGE_TAG
 
