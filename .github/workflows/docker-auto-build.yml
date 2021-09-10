@@ -53,6 +53,7 @@ jobs:
             echo "RUCIO- NOT PRESENT"
           fi
           echo "${{ matrix.context }}"
+          echo "CoNtEXT above"
           IMAGE_TAG=$(echo '${{ github.repository_owner }}/rucio-${{ matrix.context }}:release'-$GIT_TAG)
           DOCKER_HUB_TAGS=$IMAGE_TAG
 
