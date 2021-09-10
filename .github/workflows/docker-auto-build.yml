@@ -45,8 +45,10 @@ jobs:
           echo $GIT_TAG
           GIT_TAG_COMMIT_SHA=$(echo $(git rev-list -n 1 $GIT_TAG))
           echo $GIT_TAG_COMMIT_SHA
-          TAG_SOURCE_BRANCH=$(echo $(git branch --contains tags/$GIT_TAG))
-          echo $TAG_SOURCE_BRANCH
+          GIT_LATEST_COMMIT_SHA_MASTER=$(echo $(git ls-remote --heads origin | grep master  | sed "s/.*\///"))
+          echo $GIT_LATEST_COMMIT_SHA_MASTER
+          # TAG_SOURCE_BRANCH=$(echo $(git branch --contains tags/$GIT_TAG))
+          # echo $TAG_SOURCE_BRANCH
           # IMAGE_TAG=$(echo '${{ github.repository_owner }}/rucio-${{ matrix.context_dir }}:release'-$GIT_TAG)
           # DOCKER_HUB_TAGS=$IMAGE_TAG
 
