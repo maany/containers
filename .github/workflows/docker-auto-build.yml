@@ -58,13 +58,9 @@ jobs:
 
           echo ::set-output name=tag::$GIT_TAG
           echo ::set-output name=tags::$DOCKER_HUB_TAGS
-
-      - name: Prepare Docker Image name
-        shell: bash
-        run: |
-          echo 'The following images will be pushed'
-          echo '${{ steps.release.outputs.image }}'
-          echo '${{ steps.release.outputs.latest }}'
+          
+          echo $DOCKER_DOCKER_HUB_TAGS
+      
 
       # - name: Build and push
       #   id: docker_build
