@@ -27,9 +27,8 @@ jobs:
       - name: Checkout the containers repository
         uses: actions/checkout@v2
         with:
-          ref: '1.23.16'
           fetch-depth: 0
-        # TODO remove
+
       - name: Fetch all branches
         shell: bash
         run: |
@@ -40,8 +39,7 @@ jobs:
       - name: Generate Release Tags
         id: release
         shell: bash
-        run: |
-          
+        run: |  
           GIT_TAG=$(echo $(git describe --tags --abbrev=0))
           IMAGE_TAG=$(echo '${{ github.repository_owner }}/rucio-${{ matrix.context_dir }}:release'-$GIT_TAG)
           DOCKER_HUB_TAGS=$IMAGE_TAG
@@ -59,8 +57,8 @@ jobs:
           echo ::set-output name=tag::$GIT_TAG
           echo ::set-output name=tags::$DOCKER_HUB_TAGS
           
-          echo $GIT_TAG
-          echo $DOCKER_HUB_TAGS
+          echo "For tag: $GIT_TAG, the following images will be deployed: $DOCKER_HUB_TAGS"
+          
 
       # - name: Build and push
       #   id: docker_build
