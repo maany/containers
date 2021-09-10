@@ -45,7 +45,7 @@ jobs:
           echo $GIT_TAG
           GIT_TAG_COMMIT_SHA=$(echo $(git rev-list -n 1 $GIT_TAG))
           echo $GIT_TAG_COMMIT_SHA
-          GIT_LATEST_COMMIT_SHA_MASTER=$(echo $(git ls-remote --heads origin | grep master  | sed "s/.*\///"))
+          GIT_LATEST_COMMIT_SHA_MASTER=$(echo $(git ls-remote --heads origin | grep master  |  awk -F '\t' '{print $1}'))
           echo $GIT_LATEST_COMMIT_SHA_MASTER
           # TAG_SOURCE_BRANCH=$(echo $(git branch --contains tags/$GIT_TAG))
           # echo $TAG_SOURCE_BRANCH
