@@ -16,11 +16,11 @@ jobs:
           'daemons, prepend-rucio, prepend-release, push-tagged, push-latest',
           'ui, prepend-rucio, prepend-release, push-tagged, push-latest',
           'init, prepend-rucio, prepend-release, push-tagged, push-latest',
-          'fts, push-latest',
-          'fts-cron, push-latest',
-          'ssh, push-latest',
-          'xrootd, push-latest',
-          'xrootd-noauth, push-latest'
+          'fts, force-latest',
+          'fts-cron, force-latest',
+          'ssh, force-latest',
+          'xrootd, force-latest',
+          'xrootd-noauth, force-latest'
           ]
       fail-fast: false
     
@@ -60,17 +60,17 @@ jobs:
           fi
 
           LATEST_TAG="$BASE_TAG:latest"
-          IMAGE_TAG+="$BASE_TAG:"
+          IMAGE_TAG+="$BASE_TAG"
           TAGS_TO_PUSH=''
           
           if [[ ! ${CONTEXT} =~ .*"prepend-release".* && ! ${CONTEXT} =~ .*"push-tagged".* ]]; then
             echo "Config Error. Will push latest tag if commit hash matches with master branch."
           elif [[ ! ${CONTEXT} =~ .*"prepend-release".* && ${CONTEXT} =~ .*"push-tagged".* ]]; then
-            IMAGE_TAG+="$GIT_TAG"
+            IMAGE_TAG+=":$GIT_TAG"
           elif [[ ${CONTEXT} =~ .*"prepend-release".* && ! ${CONTEXT} =~ .*"push-tagged".* ]]; then
             echo "Config Error!! Will push latest tag if commit hash matches with master branch."
           else
-            IMAGE_TAG+="release-$GIT_TAG"
+            IMAGE_TAG+=":release-$GIT_TAG"
           fi
 
           if [[ "${CONTEXT}" =~ .*"push-latest".* &&  $GIT_MASTER_LATEST_COMMIT_SHA == $GIT_TAG_COMMIT_SHA  ]]; then
@@ -84,6 +84,10 @@ jobs:
               echo "Latest commit on $GIT_TAG: $GIT_TAG_COMMIT_SHA"
           fi
 
+          if [[ "${CONTEXT}" =~ .*"force-latest".* &&  $GIT_MASTER_LATEST_COMMIT_SHA == $GIT_TAG_COMMIT_SHA  ]]; then
+            echo "Will force push the latest tag"  
+            IMAGE_TAG=$IMAGE_TAG,$LATEST_TAG
+          fi
           echo $IMAGE_TAG
           echo $CONTEXT
 
