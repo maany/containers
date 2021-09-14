@@ -107,7 +107,7 @@ jobs:
                     latest commit on current tag $TAG ($GIT_TAG_COMMIT_SHA)"
               echo "An image with latest tag will be pushed to Docker Hub"
               IMAGE_TAG=$IMAGE_TAG,$LATEST_TAG
-          elif [[ "${CONTEXT}" =~ .*"push-latest".*  ]]
+          elif [[ "${CONTEXT}" =~ .*"push-latest".*  ]]; then
               echo "Note: Image tagged latest will not be pushed as commit SHA's on master and current tag do not match!!"
               echo "Latest commit on Master: $GIT_MASTER_LATEST_COMMIT_SHA"
               echo "Latest commit on $GIT_TAG: $GIT_TAG_COMMIT_SHA"
