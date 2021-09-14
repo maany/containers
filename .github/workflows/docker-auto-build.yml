@@ -8,7 +8,6 @@ on:
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
-    
     strategy:
       matrix:
         context: [
@@ -75,14 +74,19 @@ jobs:
           fi
 
           if [[ "${CONTEXT}" =~ .*"push-latest".* &&  $GIT_MASTER_LATEST_COMMIT_SHA == $GIT_TAG_COMMIT_SHA  ]]; then
-              
+              echo "There's a match between the SHA of latest commit on Master ($GIT_MASTER_LATEST_COMMIT_SHA) and \
+                    latest commit on current tag $TAG ($GIT_TAG_COMMIT_SHA)"
+              echo "An image with latest tag will be pushed to Docker Hub"
               IMAGE_TAG=$IMAGE_TAG,$LATEST_TAG
+          else
+              echo "Note: Image tagged latest will not be pushed!!"
+              echo "Latest commit on Master: $GIT_MASTER_LATEST_COMMIT_SHA"
+              echo "Latest commit on $GIT_TAG: $GIT_TAG_COMMIT_SHA"
           fi
 
           echo $IMAGE_TAG
           echo $CONTEXT
 
-          
           
           # if [ $GIT_MASTER_LATEST_COMMIT_SHA = $GIT_TAG_COMMIT_SHA ]; then
           #   LATEST_TAG=$(echo '${{ github.repository_owner }}/rucio-${{ matrix.context }}:latest')
