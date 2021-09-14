@@ -84,7 +84,7 @@ jobs:
               echo "Latest commit on $GIT_TAG: $GIT_TAG_COMMIT_SHA"
           fi
 
-          if [[ "${CONTEXT}" =~ .*"force-latest".* &&  $GIT_MASTER_LATEST_COMMIT_SHA == $GIT_TAG_COMMIT_SHA  ]]; then
+          if [[ "${CONTEXT}" =~ .*"force-latest".* ]]; then
             echo "Will force push the latest tag"  
             IMAGE_TAG=$IMAGE_TAG,$LATEST_TAG
           fi
