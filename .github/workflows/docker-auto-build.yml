@@ -16,11 +16,11 @@ jobs:
           'daemons, prepend-rucio, prepend-release, push-tagged, push-latest',
           'ui, prepend-rucio, prepend-release, push-tagged, push-latest',
           'init, prepend-rucio, prepend-release, push-tagged, push-latest',
-          'fts, force-latest',
-          'fts-cron, force-latest',
-          'ssh, force-latest',
-          'xrootd, force-latest',
-          'xrootd-noauth, force-latest'
+          'fts, latest-only',
+          'fts-cron, latest-only',
+          'ssh, latest-only',
+          'xrootd, latest-only',
+          'xrootd-noauth, latest-only'
           ]
       fail-fast: false
     
@@ -88,6 +88,12 @@ jobs:
             echo "Will force push the latest tag"  
             IMAGE_TAG=$IMAGE_TAG,$LATEST_TAG
           fi
+
+          if [[ "${CONTEXT}" =~ .*"latest-only".* ]]; then
+            echo "Only the latest tag will be pushed"  
+            IMAGE_TAG=$LATEST_TAG
+          fi
+
           echo $IMAGE_TAG
           echo $CONTEXT
 
