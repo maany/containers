@@ -46,34 +46,53 @@ jobs:
         id: release
         shell: bash
         run: |  
-          GIT_TAG=${{ steps.release_tag.outputs.version }}
+          CONTEXT=$(echo "${{ matrix.context }}")
           CONTEXT_DIR=$(echo "${{ matrix.context }}" | cut -d, -f1 )
-          IMAGE_TAG="${{ github.repository_owner}}/"
-          if [[ "${{ matrix.context }}" =~ .*"prepend-rucio".* ]]; then
-            IMAGE_TAG+="rucio-$CONTEXT_DIR"
-          else
-            IMAGE_TAG+=$CONTEXT_DIR
-          fi
-
-          echo "${{ matrix.context }}"
-          echo "CoNtEXT above"
-          echo "$IMAGE_TAG"
-          echo "Immmage Tagg"
-          IMAGE_TAG=$(echo '${{ github.repository_owner }}/rucio-${{ matrix.context }}:release'-$GIT_TAG)
-          DOCKER_HUB_TAGS=$IMAGE_TAG
-
+          GIT_TAG=${{ steps.release_tag.outputs.version }}
+          BASE_TAG="${{ github.repository_owner}}/"
+          
           GIT_TAG_COMMIT_SHA=$(echo $(git rev-list -n 1 $GIT_TAG))
           GIT_MASTER_LATEST_COMMIT_SHA=$(echo $(git ls-remote --heads origin | grep master  |  awk -F '\t' '{print $1}'))
-          
-          if [ $GIT_MASTER_LATEST_COMMIT_SHA = $GIT_TAG_COMMIT_SHA ]; then
-            LATEST_TAG=$(echo '${{ github.repository_owner }}/rucio-${{ matrix.context }}:latest')
-            DOCKER_HUB_TAGS=$DOCKER_HUB_TAGS,$LATEST_TAG
+
+          if [[ ${CONTEXT} =~ .*"prepend-rucio".* ]]; then
+            BASE_TAG+="rucio-$CONTEXT_DIR"
+          else
+            BASE_TAG+=$CONTEXT_DIR
           fi
 
-          echo ::set-output name=tag::$GIT_TAG
-          echo ::set-output name=tags::$DOCKER_HUB_TAGS
+          LATEST_TAG="$BASE_TAG:latest"
+          IMAGE_TAG+="$BASE_TAG:"
+          TAGS_TO_PUSH=''
           
-          echo "For tag: $GIT_TAG, the following images will be pushed: $DOCKER_HUB_TAGS"
+          if [[ ! ${CONTEXT} =~ .*"prepend-release".* && ! ${CONTEXT} =~ .*"push-tagged".* ]]; then
+            echo "Config Error. Will push latest tag if commit hash matches with master branch."
+          elif [[ ! ${CONTEXT} =~ .*"prepend-release".* && ${CONTEXT} =~ .*"push-tagged".* ]]; then
+            IMAGE_TAG+="$GIT_TAG"
+          elif [[ ${CONTEXT} =~ .*"prepend-release".* && ! ${CONTEXT} =~ .*"push-tagged".* ]]; then
+            echo "Config Error!! Will push latest tag if commit hash matches with master branch."
+          else
+            IMAGE_TAG+="release-$GIT_TAG"
+          fi
+
+          if [[ "${CONTEXT}" =~ .*"push-latest".* &&  $GIT_MASTER_LATEST_COMMIT_SHA == $GIT_TAG_COMMIT_SHA  ]]; then
+              
+              IMAGE_TAG=$IMAGE_TAG,$LATEST_TAG
+          fi
+
+          echo $IMAGE_TAG
+          echo $CONTEXT
+
+          
+          
+          # if [ $GIT_MASTER_LATEST_COMMIT_SHA = $GIT_TAG_COMMIT_SHA ]; then
+          #   LATEST_TAG=$(echo '${{ github.repository_owner }}/rucio-${{ matrix.context }}:latest')
+          #   DOCKER_HUB_TAGS=$DOCKER_HUB_TAGS,$LATEST_TAG
+          # fi
+
+          echo ::set-output name=tag::$GIT_TAG
+          echo ::set-output name=tags::$IMAGE_TAG
+          
+          echo "For tag: $GIT_TAG, the following images will be pushed: $IMAGE_TAG"
           
       # - name: Set up Docker Buildx
       #   uses: docker/setup-buildx-action@v1
