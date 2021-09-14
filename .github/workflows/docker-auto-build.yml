@@ -123,9 +123,10 @@ jobs:
             IMAGE_TAG=$LATEST_TAG
           fi
 
-          echo ::set-output name=tag::$GIT_TAG
+          echo ::set-output name=git_tag::$GIT_TAG
           echo ::set-output name=tags::$IMAGE_TAG
-          
+          echo ::set-output name=context_dir::CONTEXT_DIR
+
           echo "For tag: $GIT_TAG, the following images will be pushed: $IMAGE_TAG"
           
       - name: Set up Docker Buildx
@@ -141,7 +142,7 @@ jobs:
         id: docker_build
         uses: docker/build-push-action@v2
         with:
-          context: ./${{ matrix.context }}
+          context: ./${{ steps.release.output.context_dir }}
           push: true
           tags: '${{ steps.release.outputs.tags }}'
-          build-args: TAG=${{ steps.release.outputs.tag }}
+          build-args: TAG=${{ steps.release.outputs.git_tag }}
