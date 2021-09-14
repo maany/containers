@@ -125,7 +125,7 @@ jobs:
 
           echo ::set-output name=git_tag::$GIT_TAG
           echo ::set-output name=tags::$IMAGE_TAG
-          echo ::set-output name=context_dir::CONTEXT_DIR
+          echo ::set-output name=context_dir::$CONTEXT_DIR
 
           echo "For tag: $GIT_TAG, the following images will be pushed: $IMAGE_TAG"
           
