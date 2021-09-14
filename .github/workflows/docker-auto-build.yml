@@ -44,7 +44,36 @@ jobs:
       - name: Generate Docker Image Names
         id: release
         shell: bash
-        run: |  
+        run: |
+          # Generates the image tags for the containers present in the containers repository
+          # The input is inn CSV format:
+          # {sub_directory}, {config_paramms}
+          # where,
+          #     sub_directory: name of the sub_directory in rucio/containers reposistory that contains
+          #                    the Dockerfile
+          #     config_params: These are described in the CONFIG section and are used to generate 
+          #                    the image tags that will be pushed to DockerHub fot the given {sub_directory}
+          #
+          # CONFIG PARAMS
+          # -------------
+          # prepend-rucio: adds `rucio-` to image name
+          # prepend-release: adds `release-` to image name
+          # push-tagged: adds the $GIT_TAG to image name
+          # push-latest: if present, and the latest commit SHA on master branch 
+          #              matches the last commmit SHA of the current tag, adds release 
+          #              version to image name.
+          # force-latest: if present, the latest tag will be force pushed to Docker Hub
+          # latest-only: if present, only the latest tag will be pushed to Docker Hub
+          #
+          # The following truth table is used to determine the Docker Hub tag
+          # The configuration parammeters are: preprend_release, push_tagged
+          # | prepend_release 	| push_tagged 	| image_tag         	|
+          # |-----------------	|-------------	|-------------------	|
+          # | 0               	| 0           	| Config Error      	|
+          # | 0               	| 1           	| :$GIT_TAG         	|
+          # | 0               	| 0           	| Config Error      	|
+          # | 0               	| 1           	| :release-$GIT_TAG 	|
+
           CONTEXT=$(echo "${{ matrix.context }}")
           CONTEXT_DIR=$(echo "${{ matrix.context }}" | cut -d, -f1 )
           GIT_TAG=${{ steps.release_tag.outputs.version }}
@@ -64,11 +93,11 @@ jobs:
           TAGS_TO_PUSH=''
           
           if [[ ! ${CONTEXT} =~ .*"prepend-release".* && ! ${CONTEXT} =~ .*"push-tagged".* ]]; then
-            echo "Config Error. Will push latest tag if commit hash matches with master branch."
+            echo "Config Error!!"
           elif [[ ! ${CONTEXT} =~ .*"prepend-release".* && ${CONTEXT} =~ .*"push-tagged".* ]]; then
             IMAGE_TAG+=":$GIT_TAG"
           elif [[ ${CONTEXT} =~ .*"prepend-release".* && ! ${CONTEXT} =~ .*"push-tagged".* ]]; then
-            echo "Config Error!! Will push latest tag if commit hash matches with master branch."
+            echo "Config Error!!"
           else
             IMAGE_TAG+=":release-$GIT_TAG"
           fi
@@ -78,8 +107,8 @@ jobs:
                     latest commit on current tag $TAG ($GIT_TAG_COMMIT_SHA)"
               echo "An image with latest tag will be pushed to Docker Hub"
               IMAGE_TAG=$IMAGE_TAG,$LATEST_TAG
-          else
-              echo "Note: Image tagged latest will not be pushed!!"
+          elif [[ "${CONTEXT}" =~ .*"push-latest".*  ]]
+              echo "Note: Image tagged latest will not be pushed as commit SHA's on master and current tag do not match!!"
               echo "Latest commit on Master: $GIT_MASTER_LATEST_COMMIT_SHA"
               echo "Latest commit on $GIT_TAG: $GIT_TAG_COMMIT_SHA"
           fi
@@ -94,34 +123,25 @@ jobs:
             IMAGE_TAG=$LATEST_TAG
           fi
 
-          echo $IMAGE_TAG
-          echo $CONTEXT
-
-          
-          # if [ $GIT_MASTER_LATEST_COMMIT_SHA = $GIT_TAG_COMMIT_SHA ]; then
-          #   LATEST_TAG=$(echo '${{ github.repository_owner }}/rucio-${{ matrix.context }}:latest')
-          #   DOCKER_HUB_TAGS=$DOCKER_HUB_TAGS,$LATEST_TAG
-          # fi
-
           echo ::set-output name=tag::$GIT_TAG
           echo ::set-output name=tags::$IMAGE_TAG
           
           echo "For tag: $GIT_TAG, the following images will be pushed: $IMAGE_TAG"
           
-      # - name: Set up Docker Buildx
-      #   uses: docker/setup-buildx-action@v1
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
 
-      # - name: Login to DockerHub
-      #   uses: docker/login-action@v1 
-      #   with:
-      #     username: ${{ secrets.DOCKER_HUB_USERNAME }}
-      #     password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+      - name: Login to DockerHub
+        uses: docker/login-action@v1 
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
 
-      # - name: Build and push
-      #   id: docker_build
-      #   uses: docker/build-push-action@v2
-      #   with:
-      #     context: ./${{ matrix.context }}
-      #     push: true
-      #     tags: '${{ steps.release.outputs.tags }}'
-      #     build-args: TAG=${{ steps.release.outputs.tag }}
+      - name: Build and push
+        id: docker_build
+        uses: docker/build-push-action@v2
+        with:
+          context: ./${{ matrix.context }}
+          push: true
+          tags: '${{ steps.release.outputs.tags }}'
+          build-args: TAG=${{ steps.release.outputs.tag }}
